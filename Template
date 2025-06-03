@@ -1,6 +1,6 @@
 ---
 title: "Housing shortage in the Netherlands"
-author: "Joris(2787294)"
+author: "Joris heeremans(2787294), Tom Nethe(2784796), Jelle Menninga(), Daan (), Suleyman(), Soufyan() "
 date: "`r Sys.Date()`"
 output: pdf_document
 ---
