@@ -1,6 +1,6 @@
 ---
-title: "Template"
-author: "Studentnames and studentnumbers here"
+title: "Housing shortage in the Netherlands"
+author: "Joris(2787294)"
 date: "`r Sys.Date()`"
 output: pdf_document
 ---
