@@ -42,7 +42,8 @@ Include the following:
 Preferably from a URL, but if not, make sure to download the data and store it in a shared location that you can load the data in from. Do not store the data in a folder you include in the Github repository!
 
 ```{r loading_data}
-dataset <- midwest
+Voorraad_woningen <- read.csv("C:/Users/moham/Desktop/Vooraad_woningen_Google - Voorraad_woningen.csv")
+Huishoudens <- read.csv("C:/Users/moham/Desktop/Aantal_huishoudens - Blad1 (2).csv")
 ```
 
 midwest is an example dataset included in the tidyverse package
