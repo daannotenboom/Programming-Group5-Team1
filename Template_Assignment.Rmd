@@ -1,6 +1,6 @@
 ---
 title: "Houshold shortage"
-author: "Studentnames and studentnumbers here"
+author: "Joris heeremans(2787294), Tom Nethe(2784796), Mohamed Hannun(2824390), Jelle Menninga(2864828), Daan Notenboom (2853496), Suleyman Yigitsoy(2861891), Soufyan Attokoki() "
 date: "`r Sys.Date()`"
 output: pdf_document
 ---
@@ -15,13 +15,13 @@ install.packages("tidyverse")
 require(tidyverse)
 ```
 
-# Title Page
+# Houshold Shortage
 
-Include your names
+Joris Heeremans, Tom Nethe, Mohamed Hannun, Jelle Menninga, Daan Notenboom, Suleyman Yigitsoy, Soufyan Attokoki
 
-Include the tutorial group number
+Tutorial group number: 5
 
-Include your tutorial lecturer's name
+Tutorial lecturer's name: Jack Fitzgerald
 
 # Part 1 - Identify a Social Problem
 
@@ -43,10 +43,12 @@ Preferably from a URL, but if not, make sure to download the data and store it i
 
 ```{r loading_data}
 Voorraad_woningen <- read.csv("Vooraad_woningen_Google - Voorraad_woningen.csv")
+KW1_voorraad <- Voorraad_woningen[grepl("1e kwartaal", Voorraad_woningen$Perioden), ]
+
 Huishoudens <- read.csv("Aantal_huishoudens - Blad1 (2).csv")
+
 ```
 
-midwest is an example dataset included in the tidyverse package
 
 ## 2.2 Provide a short summary of the dataset(s)
 
@@ -127,6 +129,31 @@ ggplot(dataset, aes(x = inmetro, y = percadultpoverty)) +
     legend.position = "right"
   )
 ```
+library(dplyr)
+library(ggplot2)
+
+voorraad_nl <- KW1_voorraad %>% filter(Regio.s == "Nederland")
+huishoudens_nl <- Huishoudens %>% filter(Regio.s == "Nederland")
+
+colnames(voorraad_nl) <- c("Regio", "Periode", "Voorraad")
+colnames(huishoudens_nl) <- c("Regio", "Periode", "Huishoudens")
+
+
+combined <- merge(voorraad_nl, huishoudens_nl, by = c("Regio", "Periode"))
+
+# Maak de data 'long' voor ggplot
+combined_long <- combined %>%
+  select(Periode, Voorraad, Huishoudens) %>%
+  tidyr::pivot_longer(cols = c("Voorraad", "Huishoudens"),
+                      names_to = "Type",
+                      values_to = "Aantal")
+
+ggplot(combined_long, aes(x = Periode, y = Aantal, color = Type, group = Type)) +
+  geom_line(size = 1.2) +
+  labs(title = "Vergelijking woningvoorraad en huishoudens (Nederland)",
+       x = "Periode", y = "Aantal", color = "black") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 Here you provide a description of why the plot above is relevant to your specific social problem.
 
