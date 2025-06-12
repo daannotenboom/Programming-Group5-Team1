@@ -53,31 +53,60 @@ Huishoudens <- read.csv("Aantal_huishoudens - Blad1 (2).csv")
 ## 2.2 Provide a short summary of the dataset(s)
 
 ```{r}
-head(dataset)
+head(KW1_voorraad)
+head(Huishoudens)
 ```
 
-In this case we see 28 variables, but we miss some information on what units they are in. We also don't know anything about the year/moment in which this data has been captured.
-
-These are things that are usually included in the metadata of the dataset. For your project, you need to provide us with the information from your metadata that we need to understand your dataset of choice.
+Both data sets include information about the stock houses and the number of households in the Netherlands per province and period. 
 
 ## 2.3 Describe the type of variables included
 
 Think of things like:
 
--   Do the variables contain health information or SES information?
+The variables contain the stock amount of the housing in the Netherlands and the number of households. 
 
--   Have they been measured by interviewing individuals or is the data coming from administrative sources?
-
-*For the sake of this example, I will continue with the assignment...*
+The data has been collected form a institution that is linked to the government. The data are absolute. That is because the government knows how many houses there are in the Netherlands and because the goverment knows how many people there are looking for- and living in a house. 
 
 # Part 3 - Quantifying
 
 ## 3.1 Data cleaning
 
-Say we want to include only larger distances (above 2) in our dataset, we can filter for this.
-
+We already filter the data through the CBS filter. 
 ```{r data_cleaning}
-mean(dataset$percollege)
+
+
+# Extract the year as the first four characters
+voorraad_woningen$Year <- substr(voorraad_woningen$Perioden, 1, 4)
+huishoudens$Year <- substr(huishoudens$Periode, 1, 4)
+
+years <- c("2019", "2020", "2021")
+
+# Filter: only the Netherlands and provinces, only selected years, only first quarter
+housing_stock_select <- voorraad_woningen %>%
+  filter((Regio.s == "Nederland" | grepl("Provincie", Regio.s)) &
+         Year %in% years &
+         grepl("1e kwartaal", Perioden)) %>%
+  select(Region = Regio.s, Year, HousingStock = value)
+
+households_select <- huishoudens %>%
+  filter((Regio.s == "Nederland" | grepl("Provincie", Regio.s)) &
+         Year %in% years &
+         grepl("1e kwartaal", Periode)) %>%
+  select(Region = Regio.s, Year, Households = value)
+
+# Preview the result
+head(housing_stock_select)
+head(households_select)
+
+
+
+
+
+
+
+
+
+
 ```
 
 Please use a separate 'R block' of code for each type of cleaning. So, e.g. one for missing values, a new one for removing unnecessary variables etc.
