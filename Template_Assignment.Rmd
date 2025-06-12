@@ -69,22 +69,22 @@ We already filtered the data through the CBS filter.
 
 
 # Add a year column by extracting the first 4 characters of the period column
-housing_stock$Year <- substr(housing_stock$Perioden, 1, 4)
-households$Year <- substr(households$Periode, 1, 4)
+Voorraad_woningen$Year <- substr(Voorraad_woningen$Perioden, 1, 4)
+Huishoudens$Year <- substr(Huishoudens$Periode, 1, 4)
 
 # Set which years we want to use
 years_to_keep <- c("2019", "2020", "2021")
 
 # Select only data for Netherlands or provinces, and only the needed years, only first quarter
-housing_stock_selected <- subset(housing_stock,
+housing_stock_selected <- subset(Voorraad_woningen,
                                  (Regio.s == "Nederland" | grepl("Provincie", Regio.s)) &
                                  Year %in% years_to_keep &
                                  grepl("1e kwartaal", Perioden))
 
-households_selected <- subset(households,
+households_selected <- subset(Huishoudens,
                               (Regio.s == "Nederland" | grepl("Provincie", Regio.s)) &
                               Year %in% years_to_keep &
-                              grepl("1e kwartaal", Periode))
+                              grepl("1e kwartaal", Perioden))
 
 
 
