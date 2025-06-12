@@ -10,10 +10,12 @@ output: pdf_document
 ```{r package_install, eval=FALSE, include=FALSE}
 install.packages("tidyverse")
 devtools::install_github("r-lib/conflicted")
+install.packages("cbsodataR")
 ``
 
 ```{r packages}
 require(tidyverse)
+require(cbsodataR)
 ```
 
 # Houshold Shortage
