@@ -30,9 +30,9 @@ Tutorial lecturer's name: Jack Fitzgerald
 
 ## 1.1 Describe the Social Problem
 
-The Netherlands is grappling with a severe housing shortage, estimated at around 400,000 homes. (CBS, 2025) 
+The Netherlands is dealing with a severe housing shortage, estimated at around 400,000 homes. (CBS, 2025) 
 This imbalance between supply and demand, was created by population growth (including immigration), an increase in single-person households, 
-and a lack of new construction, has led to skyrocketing prices and fierce competition for available properties. 
+and a lack of new construction. This imbalance has led to skyrocketing prices and fierce competition for available houses. 
 The house prices have risen significantly, making it difficult for many, especially solo buyers and those with low to middle incomes, 
 to find suitable and affordable housing. The government needs to come up with new ideas, otherwise this problem will only grow bigger.
 
