@@ -32,7 +32,7 @@ Tutorial lecturer's name: Jack Fitzgerald
 
 The Netherlands is dealing with a severe housing shortage, estimated at around 400,000 homes. (CBS, 2025) 
 This imbalance between supply and demand, was created by population growth (including immigration), an increase in single-person households, 
-and a lack of new construction. This imbalance has led to skyrocketing prices and fierce competition for available houses. 
+and a lack of new construction (Langen, January 2025). This imbalance has led to skyrocketing prices and fierce competition for available houses. 
 The house prices have risen significantly, making it difficult for many, especially solo buyers and those with low to middle incomes, 
 to find suitable and affordable housing. The government needs to come up with new ideas, otherwise this problem will only grow bigger.
 
@@ -191,6 +191,6 @@ https://github.com/ProgrammingforEcon-Team-5-Groep-1/Programming-Group5-Team1
 CBS Statline. (May 23, 2025). https://opendata.cbs.nl/statline/#/CBS/nl/dataset/81955NED/table?fromstatweb (Last used on June 2, 2025)
 CBS Statline. (June 3, 2025). https://opendata.cbs.nl/statline/#/CBS/nl/dataset/71486ned/table?fromstatweb (Last used on June 2, 2025)
 Centraal Bureau voor de Statistiek. (2025). Wonen. Centraal Bureau Voor de Statistiek. https://www.cbs.nl/nl-nl/visualisaties/monitor-brede-welvaart-en-de-sustainable-development-goals/hier-en-nu/wonen#:~:text=Door%20ABF%20Research%20is%20voor,een%20kleine%20aanvullende%20aardgaslevering%20plaatsvindt.
-
+Mike Langen, ABN AMRO Bank. (16 January, 2025). Housing market - building according to need. https://www.abnamro.com/research/en/our-research/housing-market-building-according-to-need
 
 Use APA referencing throughout your document.
