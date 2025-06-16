@@ -1,5 +1,5 @@
 ---
-title: "Houshold shortage"
+title: "Household shortage"
 author: "Joris heeremans(2787294), Tom Nethe(2784796), Mohamed Hannun(2824390), Jelle Menninga(2864828), Daan Notenboom (2853496), Suleyman Yigitsoy(2861891), Soufyan Attokoki() "
 date: "`r Sys.Date()`"
 output: pdf_document
