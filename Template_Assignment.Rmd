@@ -97,9 +97,8 @@ households_selected <- subset(Huishoudens,
                                Regio.s %in% provincies &
                                Year %in% years_to_keep)
 
-
-
 ```
+```{r gen_Var}
 
 ## 3.2 Generate necessary variables
 
@@ -116,11 +115,12 @@ data_combined <- housing_stock_selected %>%
 data_combined <- data_combined %>%
   mutate(Tekort = Huishoudens - Voorraad)
 
-```
 
+```
+``` {r gen_var2}
 ## 3.3 Visualize temporal variation
 
-```
+
 # Zorg dat je factor-niveau voor jaar logisch wordt geordend (voor de x-as)
 data_combined$Year <- as.factor(data_combined$Year)
 
