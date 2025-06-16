@@ -18,6 +18,8 @@ install.packages("dplyr")
 require(tidyverse)
 require(cbsodataR)
 library(dplyr)
+library(ggplot2)
+
 ```
 
 # Houshold Shortage
@@ -113,18 +115,31 @@ data_combined <- housing_stock_selected %>%
 # Create shortage variable
 data_combined <- data_combined %>%
   mutate(Tekort = Huishoudens - Voorraad)
-```
-
-Variable 2
-
-```{r gen_var2}
 
 ```
 
 ## 3.3 Visualize temporal variation
 
-```{r}
+```
+# Zorg dat je factor-niveau voor jaar logisch wordt geordend (voor de x-as)
+data_combined$Year <- as.factor(data_combined$Year)
 
+# zwarte rand, smallere staven optioneel
+ggplot(data_combined, aes(x = factor(Year), y = Tekort, fill = Regio.s)) +
+  geom_col(position = "dodge", color = "black", width = 0.8) +
+  scale_y_continuous(
+    breaks = seq(
+      floor(min(data_combined$Tekort, na.rm = TRUE) / 2000) * 2000, 
+      ceiling(max(data_combined$Tekort, na.rm = TRUE) / 2000) * 2000, 
+      by = 2000)
+  ) +
+  labs(
+    title = "Housing Shortage per year per province",
+    x = "Year",
+    y = "Housing Shortage",
+    fill = "Province"
+  ) +
+  theme_minimal()
 ```
 
 ## 3.4 Visualize spatial variation
