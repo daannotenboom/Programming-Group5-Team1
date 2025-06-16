@@ -82,7 +82,7 @@ Huishoudens$Year <- substr(Huishoudens$Periode, 1, 4)
 years_to_keep <- c("2019", "2020", "2021")
 
 #Set which provinces 
-provincies <- c("Groningen (PV)", "Friesland (PV)", "Drenthe (PV)", "Overijssel (PV)", "Flevoland (PV)",
+provincies <- c("Groningen (PV)", "Fryslân (PV)", "Drenthe (PV)", "Overijssel (PV)", "Flevoland (PV)",
                 "Gelderland (PV)", "Utrecht (PV)", "Noord-Holland (PV)", "Zuid-Holland (PV)",
                 "Zeeland (PV)", "Noord-Brabant (PV)", "Limburg (PV)")
 
