@@ -12,11 +12,18 @@ install.packages("tidyverse")
 devtools::install_github("r-lib/conflicted")
 install.packages("cbsodataR")
 install.packages("dplyr")
-``
-
-```{r packages}
+install.packages("sf")
+install.packages("rnaturalearth")
+install.packages("rnaturalearthdata")
+```
+```{r packages, include=FALSE}
 require(tidyverse)
 require(cbsodataR)
+library(dplyr)
+library(ggplot2)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
 library(dplyr)
 library(ggplot2)
 
@@ -145,6 +152,33 @@ ggplot(data_combined, aes(x = factor(Year), y = Tekort, fill = Regio.s)) +
 ## 3.4 Visualize spatial variation
 
 ```{r visualise_map}
+# Haal Nederland-provincies binnen als sf-object
+nl_prov <- ne_states(country = "Netherlands", returnclass = "sf")
+
+# Maak de kolom met korte provincie-namen in je data
+data_2021 <- data_combined %>%
+  filter(Year == "2021") %>%
+  mutate(provincie_kort = gsub(" \\(PV\\)", "", Regio.s))
+
+# Combineer kaart en tekort-data
+kaart_met_tekort <- nl_prov %>%
+  left_join(data_2021, by = c("name" = "provincie_kort"))
+
+# Plot de kaart
+ggplot(kaart_met_tekort) +
+  geom_sf(aes(fill = Tekort), color = "black", size = 0.2) +
+  scale_fill_gradient(low = "blue", high = "red", name = "Woningtekort") +
+  labs(
+    title = "Woningtekort per provincie (2021)",
+    subtitle = "Hoe roder, hoe groter het tekort",
+    caption = "Bron: CBS & eigen analyse"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid = element_blank()
+)
 
 ```
 
@@ -169,30 +203,7 @@ ggplot(dataset, aes(x = inmetro, y = percadultpoverty)) +
     legend.position = "right"
   )
 ```
-library(dplyr)
-library(ggplot2)
 
-voorraad_nl <- KW1_voorraad %>% filter(Regio.s == "Nederland")
-huishoudens_nl <- Huishoudens %>% filter(Regio.s == "Nederland")
-
-colnames(voorraad_nl) <- c("Regio", "Periode", "Voorraad")
-colnames(huishoudens_nl) <- c("Regio", "Periode", "Huishoudens")
-
-
-combined <- merge(voorraad_nl, huishoudens_nl, by = c("Regio", "Periode"))
-
-# Maak de data 'long' voor ggplot
-combined_long <- combined %>%
-  select(Periode, Voorraad, Huishoudens) %>%
-  tidyr::pivot_longer(cols = c("Voorraad", "Huishoudens"),
-                      names_to = "Type",
-                      values_to = "Aantal")
-
-ggplot(combined_long, aes(x = Periode, y = Aantal, color = Type, group = Type)) +
-  geom_line(size = 1.2) +
-  labs(title = "Vergelijking woningvoorraad en huishoudens (Nederland)",
-       x = "Periode", y = "Aantal", color = "black") +
-  theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 Here you provide a description of why the plot above is relevant to your specific social problem.
