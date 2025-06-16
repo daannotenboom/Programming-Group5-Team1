@@ -11,11 +11,13 @@ output: pdf_document
 install.packages("tidyverse")
 devtools::install_github("r-lib/conflicted")
 install.packages("cbsodataR")
+install.packages("dplyr")
 ``
 
 ```{r packages}
 require(tidyverse)
 require(cbsodataR)
+library(dplyr)
 ```
 
 # Houshold Shortage
@@ -77,16 +79,21 @@ Huishoudens$Year <- substr(Huishoudens$Periode, 1, 4)
 # Set which years we want to use
 years_to_keep <- c("2019", "2020", "2021")
 
+#Set which provinces 
+provincies <- c("Groningen (PV)", "Friesland (PV)", "Drenthe (PV)", "Overijssel (PV)", "Flevoland (PV)",
+                "Gelderland (PV)", "Utrecht (PV)", "Noord-Holland (PV)", "Zuid-Holland (PV)",
+                "Zeeland (PV)", "Noord-Brabant (PV)", "Limburg (PV)")
+
 # Select only data for Netherlands or provinces, and only the needed years, only first quarter
 housing_stock_selected <- subset(Voorraad_woningen,
-                                 (Regio.s == "Nederland" | grepl("Provincie", Regio.s)) &
+                                 Regio.s %in% provincies &
                                  Year %in% years_to_keep &
                                  grepl("1e kwartaal", Perioden))
 
+
 households_selected <- subset(Huishoudens,
-                              (Regio.s == "Nederland" | grepl("Provincie", Regio.s)) &
-                              Year %in% years_to_keep &
-                              grepl("1e kwartaal", Perioden))
+                               Regio.s %in% provincies &
+                               Year %in% years_to_keep)
 
 
 
@@ -94,10 +101,18 @@ households_selected <- subset(Huishoudens,
 
 ## 3.2 Generate necessary variables
 
-Variable 1
+# Merge datasets
+data_combined <- housing_stock_selected %>%
+  select(Regio.s, Year, Voorraad = aantal) %>%  # Replace value_column if needed
+  left_join(
+    households_selected %>%
+      select(Regio.s, Year, Huishoudens = aantal), # Replace value_column if needed
+    by = c("Regio.s", "Year")
+  )
 
-```{r gen_var1}
-
+# Create shortage variable
+data_combined <- data_combined %>%
+  mutate(Tekort = Huishoudens - Voorraad)
 ```
 
 Variable 2
