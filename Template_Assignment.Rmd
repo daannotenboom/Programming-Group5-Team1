@@ -12,12 +12,21 @@ install.packages("tidyverse")
 devtools::install_github("r-lib/conflicted")
 install.packages("cbsodataR")
 install.packages("dplyr")
-``
-
-```{r packages}
+install.packages("sf")
+install.packages("rnaturalearth")
+install.packages("rnaturalearthdata")
+```
+```{r packages, include=FALSE}
 require(tidyverse)
 require(cbsodataR)
 library(dplyr)
+library(ggplot2)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(dplyr)
+library(ggplot2)
+
 ```
 
 # Houshold Shortage
@@ -51,6 +60,10 @@ KW1_voorraad <- Voorraad_woningen[grepl("1e kwartaal", Voorraad_woningen$Periode
 
 Huishoudens <- read.csv("Aantal_huishoudens - Blad1 (2).csv")
 
+Migratie <- read.csv("Migratie - Blad1 (2).csv")
+
+Bevolking <- read.csv("Bevolking - Blad1.csv")
+
 ```
 
 
@@ -80,7 +93,7 @@ Huishoudens$Year <- substr(Huishoudens$Periode, 1, 4)
 years_to_keep <- c("2019", "2020", "2021")
 
 #Set which provinces 
-provincies <- c("Groningen (PV)", "Friesland (PV)", "Drenthe (PV)", "Overijssel (PV)", "Flevoland (PV)",
+provincies <- c("Groningen (PV)", "Fryslân (PV)", "Drenthe (PV)", "Overijssel (PV)", "Flevoland (PV)",
                 "Gelderland (PV)", "Utrecht (PV)", "Noord-Holland (PV)", "Zuid-Holland (PV)",
                 "Zeeland (PV)", "Noord-Brabant (PV)", "Limburg (PV)")
 
@@ -95,9 +108,8 @@ households_selected <- subset(Huishoudens,
                                Regio.s %in% provincies &
                                Year %in% years_to_keep)
 
-
-
 ```
+```{r gen_Var}
 
 ## 3.2 Generate necessary variables
 
@@ -113,23 +125,72 @@ data_combined <- housing_stock_selected %>%
 # Create shortage variable
 data_combined <- data_combined %>%
   mutate(Tekort = Huishoudens - Voorraad)
-```
 
-Variable 2
-
-```{r gen_var2}
 
 ```
-
+``` {r gen_var2}
 ## 3.3 Visualize temporal variation
 
-```{r}
 
+# Zorg dat je factor-niveau voor jaar logisch wordt geordend (voor de x-as)
+data_combined$Year <- as.factor(data_combined$Year)
+
+# zwarte rand, smallere staven optioneel
+ggplot(data_combined, aes(x = factor(Year), y = Tekort, fill = Regio.s)) +
+  geom_col(position = "dodge", color = "black", width = 0.8) +
+  scale_y_continuous(
+    breaks = seq(
+      floor(min(data_combined$Tekort, na.rm = TRUE) / 2000) * 2000, 
+      ceiling(max(data_combined$Tekort, na.rm = TRUE) / 2000) * 2000, 
+      by = 2000)
+  ) +
+  labs(
+    title = "Housing Shortage per year per province",
+    x = "Year",
+    y = "Housing Shortage",
+    fill = "Province"
+  ) +
+  theme_minimal()
 ```
 
 ## 3.4 Visualize spatial variation
 
 ```{r visualise_map}
+# Haal shapefile met Nederlandse provincies binnen
+nl_prov <- ne_states(country = "Netherlands", returnclass = "sf")
+
+# Selecteer alleen de 12 echte provincies van Nederland
+provincies_nederland <- c(
+  "Drenthe", "Flevoland", "Friesland", "Gelderland", "Groningen",
+  "Limburg", "Noord-Brabant", "Noord-Holland", "Overijssel",
+  "Utrecht", "Zeeland", "Zuid-Holland"
+)
+nl_prov_alleen_prov <- nl_prov %>% filter(name %in% provincies_nederland)
+
+# Maak een data-frame voor 2021 met provincie-kolom zonder (PV)
+data_2021 <- data_combined %>%
+  filter(Year == "2021") %>%
+  mutate(provincie_kort = gsub(" \\(PV\\)", "", Regio.s),
+         provincie_kort = ifelse(provincie_kort == "Fryslân", "Friesland", provincie_kort))
+
+# Join: voeg de tekorten toe aan de kaart
+kaart_met_tekort <- nl_prov_alleen_prov %>%
+  left_join(data_2021, by = c("name" = "provincie_kort"))
+
+# Plot de kaart met kleurverloop blauw (laag) tot rood (hoog)
+ggplot(kaart_met_tekort) +
+  geom_sf(aes(fill = Tekort), color = "black", size = 0.5) +
+  scale_fill_gradient(low = "white", high = "red", name = "Woningtekort") +
+  labs(
+    title = "Housing shortage per province (2021)",
+    caption = "Bron: CBS & eigen analyse"
+  ) +
+  theme_minimal(base_size = 10) +
+  theme(
+    legend.key.height = unit(1,5, "cm"),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid = element_blank())
 
 ```
 
@@ -154,30 +215,7 @@ ggplot(dataset, aes(x = inmetro, y = percadultpoverty)) +
     legend.position = "right"
   )
 ```
-library(dplyr)
-library(ggplot2)
 
-voorraad_nl <- KW1_voorraad %>% filter(Regio.s == "Nederland")
-huishoudens_nl <- Huishoudens %>% filter(Regio.s == "Nederland")
-
-colnames(voorraad_nl) <- c("Regio", "Periode", "Voorraad")
-colnames(huishoudens_nl) <- c("Regio", "Periode", "Huishoudens")
-
-
-combined <- merge(voorraad_nl, huishoudens_nl, by = c("Regio", "Periode"))
-
-# Maak de data 'long' voor ggplot
-combined_long <- combined %>%
-  select(Periode, Voorraad, Huishoudens) %>%
-  tidyr::pivot_longer(cols = c("Voorraad", "Huishoudens"),
-                      names_to = "Type",
-                      values_to = "Aantal")
-
-ggplot(combined_long, aes(x = Periode, y = Aantal, color = Type, group = Type)) +
-  geom_line(size = 1.2) +
-  labs(title = "Vergelijking woningvoorraad en huishoudens (Nederland)",
-       x = "Periode", y = "Aantal", color = "black") +
-  theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 Here you provide a description of why the plot above is relevant to your specific social problem.
