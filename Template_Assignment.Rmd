@@ -62,6 +62,8 @@ Huishoudens <- read.csv("Aantal_huishoudens - Blad1 (2).csv")
 
 Migratie <- read.csv("Migratie - Blad1 (2).csv")
 
+Bevolking <- read.csv("Bevolking - Blad1.csv")
+
 ```
 
 
