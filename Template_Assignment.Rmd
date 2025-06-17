@@ -89,6 +89,7 @@ We already filtered the data through the CBS filter.
 Voorraad_woningen$Year <- substr(Voorraad_woningen$Perioden, 1, 4)
 Huishoudens$Year <- substr(Huishoudens$Periode, 1, 4)
 
+
 # Set which years we want to use
 years_to_keep <- c("2019", "2020", "2021")
 
@@ -109,6 +110,7 @@ households_selected <- subset(Huishoudens,
                                Year %in% years_to_keep)
 
 ```
+
 ```{r gen_Var}
 
 ## 3.2 Generate necessary variables
@@ -128,6 +130,7 @@ data_combined <- data_combined %>%
 
 
 ```
+
 ```{r gen_ar}
 # SUM the shortage across all provinces for each year
 nederland_shortage <- data_combined %>%
