@@ -243,6 +243,8 @@ https://github.com/ProgrammingforEcon-Team-5-Groep-1/Programming-Group5-Team1
 ## 5.2 Reference list
 CBS Statline. (May 23, 2025). https://opendata.cbs.nl/statline/#/CBS/nl/dataset/81955NED/table?fromstatweb (Last used on June 2, 2025)
 CBS Statline. (June 3, 2025). https://opendata.cbs.nl/statline/#/CBS/nl/dataset/71486ned/table?fromstatweb (Last used on June 2, 2025)
+CBS Statline. (May 28, 2025). https://opendata.cbs.nl/statline/#/CBS/nl/dataset/37230ned/table?ts=1750160957830 (Last used on June 17,2025)
+CBS Statline. (May 28, 2025). https://opendata.cbs.nl/statline/#/CBS/nl/dataset/37230ned/table?ts=1750159602778 (Last used on June 17,2025)
 Centraal Bureau voor de Statistiek. (2025). Wonen. Centraal Bureau Voor de Statistiek. https://www.cbs.nl/nl-nl/visualisaties/monitor-brede-welvaart-en-de-sustainable-development-goals/hier-en-nu/wonen#:~:text=Door%20ABF%20Research%20is%20voor,een%20kleine%20aanvullende%20aardgaslevering%20plaatsvindt.
 Mike Langen, ABN AMRO Bank. (16 January, 2025). Housing market - building according to need. https://www.abnamro.com/research/en/our-research/housing-market-building-according-to-need
 
