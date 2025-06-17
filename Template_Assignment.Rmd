@@ -241,6 +241,7 @@ Here you provide a description of why the plot above is relevant to your specifi
 https://github.com/ProgrammingforEcon-Team-5-Groep-1/Programming-Group5-Team1
 
 ## 5.2 Reference list
+
 CBS Statline. (May 23, 2025). https://opendata.cbs.nl/statline/#/CBS/nl/dataset/81955NED/table?fromstatweb (Last used on June 2, 2025)
 CBS Statline. (June 3, 2025). https://opendata.cbs.nl/statline/#/CBS/nl/dataset/71486ned/table?fromstatweb (Last used on June 2, 2025)
 CBS Statline. (May 28, 2025). https://opendata.cbs.nl/statline/#/CBS/nl/dataset/37230ned/table?ts=1750160957830 (Last used on June 17,2025)
