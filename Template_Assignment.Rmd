@@ -128,6 +128,32 @@ data_combined <- data_combined %>%
 
 
 ```
+```{r gen_ar}
+# SUM the shortage across all provinces for each year
+nederland_shortage <- data_combined %>%
+  group_by(Year) %>%
+  summarize(Total_Tekort = sum(Tekort, na.rm = TRUE))
+
+# Zorg dat Year een factor is
+nederland_shortage$Year <- as.factor(nederland_shortage$Year)
+
+# Maak de lijnplot met vaste y-as (0 tot 100.000)
+ggplot(nederland_shortage, aes(x = Year, y = Total_Tekort, group = 1)) +
+  geom_line(color = "black", size = 1.2) +
+  geom_point(size = 3, color = "red") +
+  scale_y_continuous(
+    limits = c(0, 100000),
+    breaks = seq(0, 100000, by = 20000),
+    labels = scales::comma
+  ) +
+  labs(
+    title = "Housing Shortage in the Netherlands (2019–2021)",
+    x = "Year",
+    y = "Housing Shortage"
+  ) +
+  theme_minimal(base_size = 13)
+
+``` 
 ``` {r gen_var2}
 ## 3.3 Visualize temporal variation
 
@@ -151,6 +177,8 @@ ggplot(data_combined, aes(x = factor(Year), y = Tekort, fill = Regio.s)) +
     fill = "Province"
   ) +
   theme_minimal()
+
+
 ```
 
 ## 3.4 Visualize spatial variation
@@ -187,7 +215,7 @@ ggplot(kaart_met_tekort) +
   ) +
   theme_minimal(base_size = 10) +
   theme(
-    legend.key.height = unit(1,5, "cm"),
+    legend.key.height = unit(1.5, "cm"),
     axis.text = element_blank(),
     axis.ticks = element_blank(),
     panel.grid = element_blank())
