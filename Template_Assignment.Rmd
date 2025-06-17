@@ -109,6 +109,49 @@ households_selected <- subset(Huishoudens,
                                Regio.s %in% provincies &
                                Year %in% years_to_keep)
 
+# --- 1. Reshape migration data from wide to long ---
+migratie_long <- Migratie %>%
+  filter(Onderwerp %in% c("Immigratie", "Emigratie")) %>%
+  select(-X) %>%  # Verwijder de kolom die problemen veroorzaakt
+  pivot_longer(
+    cols = starts_with("X"),
+    names_to = "Year",
+    names_prefix = "X",
+    values_to = "Aantal"
+  ) %>%
+  select(Regio.s, Onderwerp, Year, Aantal) %>%
+  pivot_wider(
+    names_from = Onderwerp,
+    values_from = Aantal
+  ) %>%
+  mutate(
+    Immigratie = as.numeric(Immigratie),
+    Emigratie = as.numeric(Emigratie)
+  )
+# --- 2. Reshape population data from wide to long ---
+bevolking_long <- Bevolking %>%
+  filter(Onderwerp == "Bevolking") %>%
+  select(-X) %>%  # Verwijder de kolom die de fout veroorzaakt
+  pivot_longer(
+    cols = starts_with("X"),
+    names_to = "Year",
+    names_prefix = "X",
+    values_to = "Bevolking"
+  ) %>%
+  select(Regio.s, Year, Bevolking) %>%
+  mutate(Bevolking = as.numeric(Bevolking))
+
+# --- 3. Merge and calculate net migration as % of population ---
+migratie_bevolking <- migratie_long %>%
+  left_join(bevolking_long, by = c("Regio.s", "Year")) %>%
+  mutate(
+    Netto_Migratie = Immigratie - Emigratie,
+    Netto_Migratie_Perc = 100 * Netto_Migratie / Bevolking
+  )
+
+head(migratie_bevolking)
+
+
 ```
 
 ```{r gen_Var}
