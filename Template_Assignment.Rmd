@@ -245,7 +245,8 @@ nl_prov_alleen_prov <- nl_prov %>% filter(name %in% provincies_nederland)
 data_2021 <- data_combined %>%
   filter(Year == "2021") %>%
   mutate(provincie_kort = gsub(" \\(PV\\)", "", Regio.s),
-         provincie_kort = ifelse(provincie_kort == "Fryslân", "Friesland", provincie_kort))
+         provincie_kort = ifelse(provincie_kort == "Fryslân", "Friesland", provincie_kort),
+         )
 
 # Join: voeg de tekorten toe aan de kaart
 kaart_met_tekort <- nl_prov_alleen_prov %>%
@@ -283,41 +284,48 @@ What is the poverty rate by state?
 
 ```{r visualise_subpopulations}
 
-data_map <- data_combined %>%
+
+# 2. Filter to the 12 main provinces
+provincies_nederland <- c(
+  "Drenthe", "Flevoland", "Friesland", "Gelderland", "Groningen",
+  "Limburg", "Noord-Brabant", "Noord-Holland", "Overijssel",
+  "Utrecht", "Zeeland", "Zuid-Holland"
+)
+nl_prov_12 <- nl_prov %>% filter(name %in% provincies_nederland)
+
+# 3. Prepare CBS migration data for 2021
+data_migratie <- migratie_bevolking %>%
   filter(Year == "2021") %>%
   mutate(
     provincie_kort = gsub(" \\(PV\\)", "", Regio.s),
     provincie_kort = ifelse(provincie_kort == "Fryslân", "Friesland", provincie_kort),
-    Netto_Migratie_Perc_2021 = ,
+    Netto_Migratie_Perc = Netto_Migratie / Bevolking * 100
   )
 
-# Voeg de berekende waarde toe aan de kaart
-kaart_met_migratie <- nl_prov_alleen_prov %>%
-  left_join(data_map, by = c("name" = "provincie_kort"))
+# 4. Join shapefile with migration data
+kaart_cbs_migratie <- nl_prov_12 %>%
+  left_join(data_migratie, by = c("name" = "provincie_kort"))
 
-# Plot de kaart
-ggplot(kaart_met_migratie) +
-  geom_sf(aes(fill = Netto_Migratie_Perc_2021), color = "black", size = 0.5) +
+ggplot(kaart_cbs_migratie) +
+  geom_sf(aes(fill = Netto_Migratie_Perc), color = "black", size = 0.4) +
   scale_fill_gradient(
-    low = "red",
-    high = "white",
-    name = "Netto migratie %",
-    limits = c(-0.01, 0.03),
-    breaks = seq(-0.01, 0.03, by = 0.01),
-    labels = percent_format(accuracy = 0.1, scale = 1)
+    low = "white", high = "red",
+    name = "Netto migratie (%)",
+    limits = c(0, 3),
+    breaks = seq(0, 3, by = 1),
+    labels = scales::percent_format(accuracy = 0.1, scale = 1)
   ) +
   labs(
-    title = "Netto migratie per provincie (2021)",
-    subtitle = "Als percentage van de bevolking in 2021"
+    title = "Net migration per province (2021)",
+    fill = "Migration %"
   ) +
-  theme_minimal(base_size = 11) +
+  theme_minimal(base_size = 12) +
   theme(
     legend.key.height = unit(1.5, "cm"),
     axis.text = element_blank(),
     axis.ticks = element_blank(),
     panel.grid = element_blank()
-  )
-
+  )
 ```
 
 Here you provide a description of why the plot above is relevant to your specific social problem.
