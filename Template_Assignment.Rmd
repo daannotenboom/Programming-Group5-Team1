@@ -89,6 +89,7 @@ We already filtered the data through the CBS filter.
 Voorraad_woningen$Year <- substr(Voorraad_woningen$Perioden, 1, 4)
 Huishoudens$Year <- substr(Huishoudens$Periode, 1, 4)
 
+
 # Set which years we want to use
 years_to_keep <- c("2019", "2020", "2021")
 
@@ -108,7 +109,51 @@ households_selected <- subset(Huishoudens,
                                Regio.s %in% provincies &
                                Year %in% years_to_keep)
 
+# --- 1. Reshape migration data from wide to long ---
+migratie_long <- Migratie %>%
+  filter(Onderwerp %in% c("Immigratie", "Emigratie")) %>%
+  select(-X) %>%  # Verwijder de kolom die problemen veroorzaakt
+  pivot_longer(
+    cols = starts_with("X"),
+    names_to = "Year",
+    names_prefix = "X",
+    values_to = "Aantal"
+  ) %>%
+  select(Regio.s, Onderwerp, Year, Aantal) %>%
+  pivot_wider(
+    names_from = Onderwerp,
+    values_from = Aantal
+  ) %>%
+  mutate(
+    Immigratie = as.numeric(Immigratie),
+    Emigratie = as.numeric(Emigratie)
+  )
+# --- 2. Reshape population data from wide to long ---
+bevolking_long <- Bevolking %>%
+  filter(Onderwerp == "Bevolking") %>%
+  select(-X) %>%  # Verwijder de kolom die de fout veroorzaakt
+  pivot_longer(
+    cols = starts_with("X"),
+    names_to = "Year",
+    names_prefix = "X",
+    values_to = "Bevolking"
+  ) %>%
+  select(Regio.s, Year, Bevolking) %>%
+  mutate(Bevolking = as.numeric(Bevolking))
+
+# --- 3. Merge and calculate net migration as % of population ---
+migratie_bevolking <- migratie_long %>%
+  left_join(bevolking_long, by = c("Regio.s", "Year")) %>%
+  mutate(
+    Netto_Migratie = Immigratie - Emigratie,
+    Netto_Migratie_Perc = 100 * Netto_Migratie / Bevolking
+  )
+
+head(migratie_bevolking)
+
+
 ```
+
 ```{r gen_Var}
 
 ## 3.2 Generate necessary variables
@@ -128,6 +173,33 @@ data_combined <- data_combined %>%
 
 
 ```
+
+```{r gen_ar}
+# SUM the shortage across all provinces for each year
+nederland_shortage <- data_combined %>%
+  group_by(Year) %>%
+  summarize(Total_Tekort = sum(Tekort, na.rm = TRUE))
+
+# Zorg dat Year een factor is
+nederland_shortage$Year <- as.factor(nederland_shortage$Year)
+
+# Maak de lijnplot met vaste y-as (0 tot 100.000)
+ggplot(nederland_shortage, aes(x = Year, y = Total_Tekort, group = 1)) +
+  geom_line(color = "black", size = 1.2) +
+  geom_point(size = 3, color = "red") +
+  scale_y_continuous(
+    limits = c(0, 100000),
+    breaks = seq(0, 100000, by = 20000),
+    labels = scales::comma
+  ) +
+  labs(
+    title = "Housing Shortage in the Netherlands (2019–2021)",
+    x = "Year",
+    y = "Housing Shortage"
+  ) +
+  theme_minimal(base_size = 13)
+
+``` 
 ``` {r gen_var2}
 ## 3.3 Visualize temporal variation
 
@@ -151,6 +223,8 @@ ggplot(data_combined, aes(x = factor(Year), y = Tekort, fill = Regio.s)) +
     fill = "Province"
   ) +
   theme_minimal()
+
+
 ```
 
 ## 3.4 Visualize spatial variation
@@ -187,7 +261,7 @@ ggplot(kaart_met_tekort) +
   ) +
   theme_minimal(base_size = 10) +
   theme(
-    legend.key.height = unit(1,5, "cm"),
+    legend.key.height = unit(1.5, "cm"),
     axis.text = element_blank(),
     axis.ticks = element_blank(),
     panel.grid = element_blank())
@@ -241,6 +315,7 @@ Here you provide a description of why the plot above is relevant to your specifi
 https://github.com/ProgrammingforEcon-Team-5-Groep-1/Programming-Group5-Team1
 
 ## 5.2 Reference list
+
 CBS Statline. (May 23, 2025). https://opendata.cbs.nl/statline/#/CBS/nl/dataset/81955NED/table?fromstatweb (Last used on June 2, 2025)
 CBS Statline. (June 3, 2025). https://opendata.cbs.nl/statline/#/CBS/nl/dataset/71486ned/table?fromstatweb (Last used on June 2, 2025)
 CBS Statline. (May 28, 2025). https://opendata.cbs.nl/statline/#/CBS/nl/dataset/37230ned/table?ts=1750160957830 (Last used on June 17,2025)
