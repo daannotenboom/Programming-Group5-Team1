@@ -254,17 +254,24 @@ kaart_met_tekort <- nl_prov_alleen_prov %>%
 # Plot de kaart met kleurverloop blauw (laag) tot rood (hoog)
 ggplot(kaart_met_tekort) +
   geom_sf(aes(fill = Tekort), color = "black", size = 0.5) +
-  scale_fill_gradient(low = "white", high = "red", name = "Woningtekort") +
+  scale_fill_gradient(
+    low = "white",
+    high = "red",
+    name = "Housing shortage",
+    limits = c(-12000, 20000),
+    breaks = seq(-12000, 20000, by = 4000),
+    labels = scales::comma
+  ) +
   labs(
     title = "Housing shortage per province (2021)",
-    caption = "Bron: CBS & eigen analyse"
   ) +
   theme_minimal(base_size = 10) +
   theme(
     legend.key.height = unit(1.5, "cm"),
     axis.text = element_blank(),
     axis.ticks = element_blank(),
-    panel.grid = element_blank())
+    panel.grid = element_blank()
+  )
 
 ```
 
@@ -275,22 +282,43 @@ Here you provide a description of why the plot above is relevant to your specifi
 What is the poverty rate by state?
 
 ```{r visualise_subpopulations}
-dataset$inmetro <- dataset$inmetro %>% as.factor()
-# Boxplot of poverty rate by state using the 'midwest' dataset
-ggplot(dataset, aes(x = inmetro, y = percadultpoverty)) +
-  geom_boxplot() +
-  labs(
-    title = "Distribution of Poverty Rates by Metropolitan status (Midwest counties)",
-    x = "Metropolitan Area",
-    y = "Poverty Rate of Adults (%)"
-  ) +
-  theme_minimal() +
-  theme(
-    legend.position = "right"
-  )
-```
 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+data_map <- data_combined %>%
+  filter(Year == "2021") %>%
+  mutate(
+    provincie_kort = gsub(" \\(PV\\)", "", Regio.s),
+    provincie_kort = ifelse(provincie_kort == "Fryslân", "Friesland", provincie_kort),
+    Netto_Migratie_Perc_2021 = ,
+  )
+
+# Voeg de berekende waarde toe aan de kaart
+kaart_met_migratie <- nl_prov_alleen_prov %>%
+  left_join(data_map, by = c("name" = "provincie_kort"))
+
+# Plot de kaart
+ggplot(kaart_met_migratie) +
+  geom_sf(aes(fill = Netto_Migratie_Perc_2021), color = "black", size = 0.5) +
+  scale_fill_gradient(
+    low = "red",
+    high = "white",
+    name = "Netto migratie %",
+    limits = c(-0.01, 0.03),
+    breaks = seq(-0.01, 0.03, by = 0.01),
+    labels = percent_format(accuracy = 0.1, scale = 1)
+  ) +
+  labs(
+    title = "Netto migratie per provincie (2021)",
+    subtitle = "Als percentage van de bevolking in 2021"
+  ) +
+  theme_minimal(base_size = 11) +
+  theme(
+    legend.key.height = unit(1.5, "cm"),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid = element_blank()
+  )
+
+```
 
 Here you provide a description of why the plot above is relevant to your specific social problem.
 
